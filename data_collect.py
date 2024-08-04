@@ -1,16 +1,39 @@
 from bs4 import BeautifulSoup
 import os
+import pandas as pd
 
-d = {'tital': [1, 2], 'price': [3, 4],  "link": [1 , 2]}
+d = {'tital': [], 'price': [],  "link": []}
 
 for file in os.listdir("data"):
-    with open (f"data/{file}") as f:
-     html_doc = f.read()
+    try:
+       with open (f"data/{file}") as f:
+          html_doc = f.read()
 
-    soup = BeautifulSoup(html_doc, 'html.parser')
-    t = soup.find("h2")
-    tital = t.get_text()
-    print(tital)
-    break
+       soup = BeautifulSoup(html_doc, 'html.parser')
+       t = soup.find("h2")
+       tital = t.get_text()
+   
+       l = t.find("a")
+       link = "https://amazon.in/" + l["href"]
+   
+       p = soup.find("span", attrs= {"class": "a-price"})
+       price = p.get_text()
+       d["tital"].append(tital)
+       d["price"].append(price)
+       d["link"].append(link)
+
+    
+    
+
+       
+    except Exception as e:
+       print(e)
+
+df = pd.DataFrame(data = d)
+df.to_csv("data.csv")
+
+
+
+
     
 
